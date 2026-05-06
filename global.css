@@ -1,0 +1,43 @@
+#countryCards div {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin: 10px;
+  max-width: 200px;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+#countryCards div:hover {
+  transform: scale(1.05);
+}
+
+#modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hidden {
+  display: none !important;
+}
+
+#modalContent {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 400px;
+  width: 90%;
+}
+
+#closeModal {
+  cursor: pointer;
+  float: right;
+  font-size: 24px;
+}

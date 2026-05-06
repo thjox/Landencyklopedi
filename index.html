@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="global.css" />
+    <title>GlobalAtlas</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header>
+      <nav
+        class="navbar bg-dark border-bottom border-body"
+        data-bs-theme="dark"
+      >
+        <h1 class="text-info">GlobalAtlas</h1>
+        <div class="btn-group" role="group" aria-label="Buttons for regions">
+          <button
+            type="button"
+            class="btn btn-outline-info"
+            data-region="africa"
+          >
+            Afrika
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline-info"
+            data-region="americas"
+          >
+            Americas
+          </button>
+          <button type="button" class="btn btn-outline-info" data-region="asia">
+            Asia
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline-info"
+            data-region="europe"
+          >
+            Europe
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline-info"
+            data-region="oceania"
+          >
+            Oceania
+          </button>
+        </div>
+        <form id="worldSearchForm">
+          <label for="worldSearchInput"></label>
+          <input
+            type="text"
+            id="worldSearchInput"
+            placeholder="Search for a country"
+          />
+          <button type="submit" class="btn btn-outline-info">Search</button>
+        </form>
+      </nav>
+    </header>
+    <main>
+      <div id="cardContainer">
+        <div id="countryCards"></div>
+      </div>
+    </main>
+    <div id="modal" class="hidden">
+      <div id="modalContent">
+        <span id="closeModal">&times;</span>
+        <div id="modalBody"></div>
+      </div>
+    </div>
+    <footer></footer>
+    <script src="index.js"></script>
+  </body>
+</html>
