@@ -1,9 +1,9 @@
 const worldSearchForm = document.getElementById("worldSearchForm");
 const worldSearchInput = document.getElementById("worldSearchInput");
 const countryCards = document.getElementById("countryCards");
-const modal = document.getElementById("modal");
+const modalElement = document.getElementById("countryModal");
+const modalInstance = new bootstrap.Modal(modalElement);
 const modalBody = document.getElementById("modalBody");
-const closeModal = document.getElementById("closeModal");
 const regionButtons = document.querySelectorAll(".btn-group button");
 
 let allCountries = [];
@@ -25,27 +25,18 @@ const sortCountries = (countries) => {
 const openModal = (country) => {
   modalBody.innerHTML = `
     <h2>${country.name.common}</h2>
-    <img src="${country.flags.png}" width="150">
+    <img src="${country.flags.png}" class="img-fluid mb-3">
     <p><strong>Region:</strong> ${country.region}</p>
     <p><strong>Subregion:</strong> ${country.subregion || "N/A"}</p>
     <p><strong>Capital:</strong> ${country.capital?.[0] || "N/A"}</p>
-    <p><strong>Languages:</strong> ${country.languages ? Object.values(country.languages).join(", ") : "N/A"}</p>
+    <p><strong>Languages:</strong> ${
+      country.languages ? Object.values(country.languages).join(", ") : "N/A"
+    }</p>
     <p><strong>Population:</strong> ${country.population.toLocaleString()}</p>
   `;
 
-  modal.classList.remove("hidden");
+  modalInstance.show();
 };
-
-closeModal.addEventListener("click", () => {
-  modal.classList.add("hidden");
-});
-
-// stäng om man klickar utanför modal
-modal.addEventListener("click", (e) => {
-  if (e.target === modal) {
-    modal.classList.add("hidden");
-  }
-});
 
 const renderCountries = (countries) => {
   countryCards.innerHTML = "";
@@ -53,20 +44,28 @@ const renderCountries = (countries) => {
   const sorted = sortCountries(countries);
 
   sorted.forEach((country) => {
-    const card = document.createElement("div");
+    const col = document.createElement("div");
+    col.className = "col-sm-6 col-md-4 col-lg-3";
 
-    card.innerHTML = `
-      <img src="${country.flags.png}" alt="Flag of ${country.name.common}" width="100">
-      <h3>${country.name.common}</h3>
-      <p>Region: ${country.region}</p>
-      <p>Capital: ${country.capital?.[0] || "N/A"}</p>
+    col.innerHTML = `
+      <div class="card h-100 shadow-sm bg-dark text-light">
+        <img src="${country.flags.png}" 
+             class="card-img-top" 
+             alt="Flag of ${country.name.common}">
+             
+        <div class="card-body">
+          <h5 class="card-title">${country.name.common}</h5>
+          <p class="card-text mb-1"><strong>Region:</strong> ${country.region}</p>
+          <p class="card-text"><strong>Capital:</strong> ${country.capital?.[0] || "N/A"}</p>
+        </div>
+      </div>
     `;
 
-    card.addEventListener("click", () => {
+    col.querySelector(".card").addEventListener("click", () => {
       openModal(country);
     });
 
-    countryCards.appendChild(card);
+    countryCards.appendChild(col);
   });
 };
 
