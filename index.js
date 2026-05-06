@@ -5,12 +5,13 @@ const modalElement = document.getElementById("countryModal");
 const modalInstance = new bootstrap.Modal(modalElement);
 const modalBody = document.getElementById("modalBody");
 const regionButtons = document.querySelectorAll(".btn-group button");
+const loading = document.getElementById("loading");
 
 let allCountries = [];
 
 const getCountry = async () => {
   const response = await fetch(
-    "https://restcountries.com/v3.1/all?fields=name,capital,flags,region,population,subregion,languages",
+    "https://restcountries.com/v3.1/all?fields=name,capital,flags,region,population,subregion,languages,currencies",
   );
 
   return await response.json();
@@ -23,19 +24,35 @@ const sortCountries = (countries) => {
 
 // Öppnar detaljkort för varje land
 const openModal = (country) => {
+  const currencies = country.currencies
+    ? Object.values(country.currencies)
+        .map((c) => c.name)
+        .join(", ")
+    : "N/A";
+
   modalBody.innerHTML = `
     <h2>${country.name.common}</h2>
     <img src="${country.flags.png}" class="img-fluid mb-3">
+
     <p><strong>Region:</strong> ${country.region}</p>
     <p><strong>Subregion:</strong> ${country.subregion || "N/A"}</p>
     <p><strong>Capital:</strong> ${country.capital?.[0] || "N/A"}</p>
     <p><strong>Languages:</strong> ${
       country.languages ? Object.values(country.languages).join(", ") : "N/A"
     }</p>
+    <p><strong>Currency:</strong> ${currencies}</p>
     <p><strong>Population:</strong> ${country.population.toLocaleString()}</p>
   `;
 
   modalInstance.show();
+};
+
+const showLoading = () => {
+  loading.classList.remove("d-none");
+};
+
+const hideLoading = () => {
+  loading.classList.add("d-none");
 };
 
 const renderCountries = (countries) => {
@@ -49,7 +66,7 @@ const renderCountries = (countries) => {
 
     col.innerHTML = `
       <div class="card h-100 shadow-sm bg-dark text-light">
-        <img src="${country.flags.png}" 
+        <img src="${country.flags.svg}" 
              class="card-img-top" 
              alt="Flag of ${country.name.common}">
              
@@ -71,12 +88,20 @@ const renderCountries = (countries) => {
 
 // Fetch once on page load
 window.addEventListener("DOMContentLoaded", async () => {
+  showLoading();
+
   allCountries = await getCountry();
-  renderCountries(allCountries);
+
+  setTimeout(() => {
+    hideLoading();
+    renderCountries(allCountries);
+  }, 200);
 });
 
 worldSearchForm.addEventListener("submit", (event) => {
   event.preventDefault();
+
+  showLoading();
 
   const searchValue = worldSearchInput.value.trim().toLowerCase();
 
@@ -84,12 +109,22 @@ worldSearchForm.addEventListener("submit", (event) => {
     country.name.common.toLowerCase().includes(searchValue),
   );
 
-  renderCountries(filtered);
+  setTimeout(() => {
+    renderCountries(filtered);
+    hideLoading();
+  }, 200);
+
+  worldSearchInput.value = "";
 });
 
 regionButtons.forEach((button) => {
   button.addEventListener("click", () => {
     const region = button.dataset.region;
+
+    if (region === "all") {
+      renderCountries(allCountries);
+      return;
+    }
 
     const filtered = allCountries.filter(
       (country) => country.region.toLowerCase() === region,

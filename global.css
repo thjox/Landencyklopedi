@@ -3,8 +3,9 @@ body {
   background-color: #0f172a;
 }
 
-/* Cards */
 .card {
+  background-color: #1e293b;
+  color: #fff;
   border: none;
   border-radius: 12px;
   overflow: hidden;
@@ -27,14 +28,8 @@ body {
   background: #1e293b;
 }
 
-/* Layout spacing */
 #countryCards {
   margin-top: 20px;
-}
-
-.card {
-  background-color: #1e293b;
-  color: #fff;
 }
 
 .card-title {
@@ -44,4 +39,8 @@ body {
 .card-text {
   font-size: 0.9rem;
   opacity: 0.8;
+}
+
+#loading {
+  font-size: 1.1rem;
 }
