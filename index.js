@@ -6,15 +6,35 @@ const modalInstance = new bootstrap.Modal(modalElement);
 const modalBody = document.getElementById("modalBody");
 const regionButtons = document.querySelectorAll(".btn-group button");
 const loading = document.getElementById("loading");
+const errorMessage = document.getElementById("errorMessage");
 
 let allCountries = [];
 
-const getCountry = async () => {
-  const response = await fetch(
-    "https://restcountries.com/v3.1/all?fields=name,capital,flags,region,population,subregion,languages,currencies",
-  );
+const showError = (message) => {
+  errorMessage.textContent = message;
+  errorMessage.classList.remove("d-none");
+};
 
-  return await response.json();
+const hideError = () => {
+  errorMessage.classList.add("d-none");
+};
+
+//Hämtar data via API
+const getCountry = async () => {
+  try {
+    const response = await fetch(
+      "https://restcountries.com/v3.1/all?fields=name,capital,flags,region,population,subregion,languages,currencies",
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch countries");
+    }
+
+    return await response.json();
+  } catch (error) {
+    showError("Something went wrong while loading countries.");
+    return [];
+  }
 };
 
 //Sorterar i bokstavsordning
@@ -22,7 +42,7 @@ const sortCountries = (countries) => {
   return countries.sort((a, b) => a.name.common.localeCompare(b.name.common));
 };
 
-// Öppnar detaljkort för varje land
+// Öppnar detaljkort (modal) för varje land
 const openModal = (country) => {
   const currencies = country.currencies
     ? Object.values(country.currencies)
@@ -47,6 +67,7 @@ const openModal = (country) => {
   modalInstance.show();
 };
 
+//Loadingstate
 const showLoading = () => {
   loading.classList.remove("d-none");
 };
@@ -55,6 +76,7 @@ const hideLoading = () => {
   loading.classList.add("d-none");
 };
 
+//Renderar countrycards
 const renderCountries = (countries) => {
   countryCards.innerHTML = "";
 
@@ -89,36 +111,60 @@ const renderCountries = (countries) => {
 // Fetch once on page load
 window.addEventListener("DOMContentLoaded", async () => {
   showLoading();
+  hideError();
 
   allCountries = await getCountry();
 
   setTimeout(() => {
     hideLoading();
-    renderCountries(allCountries);
+
+    if (allCountries.length > 0) {
+      renderCountries(allCountries);
+      countryCards.classList.remove("d-none");
+    }
   }, 200);
 });
 
+//Eventlyssnare sökknapp
 worldSearchForm.addEventListener("submit", (event) => {
   event.preventDefault();
 
+  hideError();
   showLoading();
 
   const searchValue = worldSearchInput.value.trim().toLowerCase();
+
+  // Felhantering vid tomt inputfält
+  if (searchValue === "") {
+    hideLoading();
+    showError("Please enter a country name.");
+    return;
+  }
 
   const filtered = allCountries.filter((country) =>
     country.name.common.toLowerCase().includes(searchValue),
   );
 
   setTimeout(() => {
-    renderCountries(filtered);
     hideLoading();
+
+    // Felhantering om  det inte hittas något resultat
+    if (filtered.length === 0) {
+      countryCards.innerHTML = "";
+      showError("No countries found.");
+      return;
+    }
+
+    renderCountries(filtered);
   }, 200);
 
   worldSearchInput.value = "";
 });
 
+//Eventlysnare regionsknappar
 regionButtons.forEach((button) => {
   button.addEventListener("click", () => {
+    hideError();
     const region = button.dataset.region;
 
     if (region === "all") {
@@ -132,4 +178,9 @@ regionButtons.forEach((button) => {
 
     renderCountries(filtered);
   });
+});
+
+// Tar bort felmeddelande när användaren börjar skriva igen
+worldSearchInput.addEventListener("input", () => {
+  hideError();
 });
