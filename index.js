@@ -4,10 +4,11 @@ const countryCards = document.getElementById("countryCards");
 const modalElement = document.getElementById("countryModal");
 const modalInstance = new bootstrap.Modal(modalElement);
 const modalBody = document.getElementById("modalBody");
-const regionButtons = document.querySelectorAll(".btn-group button");
+const regionButtons = document.querySelectorAll("[data-region]");
 const loading = document.getElementById("loading");
 const errorMessage = document.getElementById("errorMessage");
 
+//Skapar en tom lista där alla länder från API:et ska sparas
 let allCountries = [];
 
 const showError = (message) => {
@@ -84,7 +85,7 @@ const renderCountries = (countries) => {
 
   sorted.forEach((country) => {
     const col = document.createElement("div");
-    col.className = "col-sm-6 col-md-4 col-lg-3";
+    col.className = "col-12 col-sm-6 col-md-4 col-lg-3";
 
     col.innerHTML = `
       <div class="card h-100 shadow-sm bg-dark text-light">
@@ -119,7 +120,34 @@ window.addEventListener("DOMContentLoaded", async () => {
     hideLoading();
 
     if (allCountries.length > 0) {
-      renderCountries(allCountries);
+      const savedRegion = localStorage.getItem("lastRegion");
+      const savedSearch = localStorage.getItem("lastSearch");
+
+      // Återställ region
+      if (savedRegion && savedRegion !== "all") {
+        const filtered = allCountries.filter(
+          (country) => country.region.toLowerCase() === savedRegion,
+        );
+
+        renderCountries(filtered);
+      }
+
+      // Återställ sökning
+      else if (savedSearch) {
+        worldSearchInput.value = savedSearch;
+
+        const filtered = allCountries.filter((country) =>
+          country.name.common.toLowerCase().includes(savedSearch),
+        );
+
+        renderCountries(filtered);
+      }
+
+      // Standardläge
+      else {
+        renderCountries(allCountries);
+      }
+
       countryCards.classList.remove("d-none");
     }
   }, 200);
@@ -133,6 +161,8 @@ worldSearchForm.addEventListener("submit", (event) => {
   showLoading();
 
   const searchValue = worldSearchInput.value.trim().toLowerCase();
+  localStorage.setItem("lastSearch", searchValue);
+  localStorage.removeItem("lastRegion");
 
   // Felhantering vid tomt inputfält
   if (searchValue === "") {
@@ -166,6 +196,8 @@ regionButtons.forEach((button) => {
   button.addEventListener("click", () => {
     hideError();
     const region = button.dataset.region;
+    localStorage.setItem("lastRegion", region);
+    localStorage.removeItem("lastSearch");
 
     if (region === "all") {
       renderCountries(allCountries);

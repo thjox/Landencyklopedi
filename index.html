@@ -21,73 +21,101 @@
   <body>
     <header>
       <nav
-        class="navbar bg-dark border-bottom border-body"
+        class="navbar navbar-expand-lg bg-dark border-bottom border-body"
         data-bs-theme="dark"
       >
-        <div
-          class="container d-flex flex-wrap align-items-center justify-content-between"
-        >
-          <h1 class="text-info m-0">GlobalAtlas</h1>
+        <div class="container">
+          <h1 class="navbar-brand text-info m-0">GlobalAtlas</h1>
 
-          <div class="btn-group my-2" role="group">
-            <button
-              type="button"
-              class="btn btn-outline-info"
-              data-region="africa"
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarContent"
+            aria-controls="navbarContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div
+            class="collapse navbar-collapse justify-content-between mt-3 mt-lg-0"
+            id="navbarContent"
+          >
+            <div class="d-flex flex-column flex-lg-row gap-2 my-3 my-lg-0">
+              <button
+                type="button"
+                class="btn btn-outline-info"
+                data-region="africa"
+              >
+                Africa
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-outline-info"
+                data-region="americas"
+              >
+                America
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-outline-info"
+                data-region="asia"
+              >
+                Asia
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-outline-info"
+                data-region="europe"
+              >
+                Europe
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-outline-info"
+                data-region="oceania"
+              >
+                Oceania
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-outline-info"
+                data-region="all"
+              >
+                All regions
+              </button>
+            </div>
+
+            <form
+              id="worldSearchForm"
+              class="d-flex flex-column flex-sm-row gap-2 mt-3 mt-lg-0"
             >
-              Africa
-            </button>
-            <button
-              type="button"
-              class="btn btn-outline-info"
-              data-region="americas"
-            >
-              America
-            </button>
-            <button
-              type="button"
-              class="btn btn-outline-info"
-              data-region="asia"
-            >
-              Asia
-            </button>
-            <button
-              type="button"
-              class="btn btn-outline-info"
-              data-region="europe"
-            >
-              Europe
-            </button>
-            <button
-              type="button"
-              class="btn btn-outline-info"
-              data-region="oceania"
-            >
-              Oceania
-            </button>
-            <button
-              type="button"
-              class="btn btn-outline-info"
-              data-region="all"
-            >
-              All regions
-            </button>
+              <input
+                type="text"
+                id="worldSearchInput"
+                class="form-control"
+                placeholder="Search for a country"
+                aria-label="Searchinput"
+              />
+
+              <button type="submit" class="btn btn-outline-info">Search</button>
+            </form>
           </div>
-
-          <form id="worldSearchForm" class="d-flex gap-2">
-            <input
-              type="text"
-              id="worldSearchInput"
-              class="form-control"
-              placeholder="Search for a country"
-            />
-            <button type="submit" class="btn btn-outline-info">Search</button>
-          </form>
         </div>
       </nav>
     </header>
     <main class="bg-dark min-vh-100">
-      <div id="loading" class="text-center text-light my-4 d-none">
+      <div
+        id="loading"
+        class="d-flex flex-column justify-content-center align-items-center text-light min-vh-100"
+      >
         <div class="spinner-border text-info" role="status"></div>
         <p class="mt-2">Loading countries...</p>
       </div>

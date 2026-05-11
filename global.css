@@ -1,6 +1,7 @@
 body {
   font-family: "Roboto", sans-serif;
   background-color: #0f172a;
+  overflow-x: hidden;
 }
 
 .card {
@@ -43,4 +44,60 @@ body {
 
 #loading {
   font-size: 1.1rem;
+}
+
+.navbar-toggler {
+  border-color: #0dcaf0;
+}
+
+.navbar-toggler:focus {
+  box-shadow: none;
+}
+
+.navbar-brand {
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  font-weight: 700;
+  margin-right: 2rem;
+}
+
+@media (max-width: 576px) {
+  .card img {
+    height: 140px;
+  }
+
+  .card-title {
+    font-size: 1rem;
+  }
+
+  .card-text {
+    font-size: 0.85rem;
+  }
+
+  #loading {
+    font-size: 1rem;
+    padding: 2rem 0;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    text-align: center;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  #worldSearchForm {
+    width: 100%;
+  }
+
+  #worldSearchInput {
+    width: 100%;
+  }
+}
+
+@media (min-width: 577px) and (max-width: 992px) {
+  .card img {
+    height: 150px;
+  }
 }
