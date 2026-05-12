@@ -4,6 +4,12 @@ const countryCards = document.getElementById("countryCards");
 const modalElement = document.getElementById("countryModal");
 const modalInstance = new bootstrap.Modal(modalElement);
 const modalBody = document.getElementById("modalBody");
+
+// Fokus tillbaka till sökfältet när modal stängs
+modalElement.addEventListener("hide.bs.modal", () => {
+  document.activeElement.blur();
+});
+
 const regionButtons = document.querySelectorAll("[data-region]");
 const loading = document.getElementById("loading");
 const errorMessage = document.getElementById("errorMessage");
@@ -156,7 +162,6 @@ const restoreState = () => {
   }
 };
 
-// Fetch once on page load
 window.addEventListener("DOMContentLoaded", async () => {
   showLoading();
   hideError();
