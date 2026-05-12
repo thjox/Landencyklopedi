@@ -43,13 +43,47 @@ const sortCountries = (countries) => {
   return countries.sort((a, b) => a.name.common.localeCompare(b.name.common));
 };
 
+//Filtrera efter sökning
+const filterBySearch = (searchTerm) => {
+  return allCountries.filter((country) =>
+    country.name.common.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
+};
+
+//Filtrera efter region
+const filterByRegion = (region) => {
+  if (region === "all") {
+    return allCountries;
+  }
+  return allCountries.filter(
+    (country) => country.region.toLowerCase() === region,
+  );
+};
+
+//Hämta valutor från land
+const getCurrencies = (country) => {
+  if (!country.currencies) return "N/A";
+  return Object.values(country.currencies)
+    .map((c) => c.name)
+    .join(", ");
+};
+
+//Hämta språk från land
+const getLanguages = (country) => {
+  if (!country.languages) return "N/A";
+  return Object.values(country.languages).join(", ");
+};
+
+//Hämta huvudstad från land
+const getCapital = (country) => {
+  return country.capital?.[0] || "N/A";
+};
+
 // Öppnar detaljkort (modal) för varje land
 const openModal = (country) => {
-  const currencies = country.currencies
-    ? Object.values(country.currencies)
-        .map((c) => c.name)
-        .join(", ")
-    : "N/A";
+  const currencies = getCurrencies(country);
+  const languages = getLanguages(country);
+  const capital = getCapital(country);
 
   modalBody.innerHTML = `
     <h2>${country.name.common}</h2>
@@ -57,10 +91,8 @@ const openModal = (country) => {
 
     <p><strong>Region:</strong> ${country.region}</p>
     <p><strong>Subregion:</strong> ${country.subregion || "N/A"}</p>
-    <p><strong>Capital:</strong> ${country.capital?.[0] || "N/A"}</p>
-    <p><strong>Languages:</strong> ${
-      country.languages ? Object.values(country.languages).join(", ") : "N/A"
-    }</p>
+    <p><strong>Capital:</strong> ${capital}</p>
+    <p><strong>Languages:</strong> ${languages}</p>
     <p><strong>Currency:</strong> ${currencies}</p>
     <p><strong>Population:</strong> ${country.population.toLocaleString()}</p>
   `;
@@ -96,7 +128,7 @@ const renderCountries = (countries) => {
         <div class="card-body">
           <h5 class="card-title">${country.name.common}</h5>
           <p class="card-text mb-1"><strong>Region:</strong> ${country.region}</p>
-          <p class="card-text"><strong>Capital:</strong> ${country.capital?.[0] || "N/A"}</p>
+          <p class="card-text"><strong>Capital:</strong> ${getCapital(country)}</p>
         </div>
       </div>
     `;
@@ -107,6 +139,21 @@ const renderCountries = (countries) => {
 
     countryCards.appendChild(col);
   });
+};
+
+// Återställ senaste sökning eller region
+const restoreState = () => {
+  const savedRegion = localStorage.getItem("lastRegion");
+  const savedSearch = localStorage.getItem("lastSearch");
+
+  if (savedRegion && savedRegion !== "all") {
+    renderCountries(filterByRegion(savedRegion));
+  } else if (savedSearch) {
+    worldSearchInput.value = savedSearch;
+    renderCountries(filterBySearch(savedSearch));
+  } else {
+    renderCountries(allCountries);
+  }
 };
 
 // Fetch once on page load
@@ -120,34 +167,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     hideLoading();
 
     if (allCountries.length > 0) {
-      const savedRegion = localStorage.getItem("lastRegion");
-      const savedSearch = localStorage.getItem("lastSearch");
-
-      // Återställ region
-      if (savedRegion && savedRegion !== "all") {
-        const filtered = allCountries.filter(
-          (country) => country.region.toLowerCase() === savedRegion,
-        );
-
-        renderCountries(filtered);
-      }
-
-      // Återställ sökning
-      else if (savedSearch) {
-        worldSearchInput.value = savedSearch;
-
-        const filtered = allCountries.filter((country) =>
-          country.name.common.toLowerCase().includes(savedSearch),
-        );
-
-        renderCountries(filtered);
-      }
-
-      // Standardläge
-      else {
-        renderCountries(allCountries);
-      }
-
+      restoreState();
       countryCards.classList.remove("d-none");
     }
   }, 200);
@@ -171,14 +191,12 @@ worldSearchForm.addEventListener("submit", (event) => {
     return;
   }
 
-  const filtered = allCountries.filter((country) =>
-    country.name.common.toLowerCase().includes(searchValue),
-  );
+  const filtered = filterBySearch(searchValue);
 
   setTimeout(() => {
     hideLoading();
 
-    // Felhantering om  det inte hittas något resultat
+    // Felhantering om det inte hittas något resultat
     if (filtered.length === 0) {
       countryCards.innerHTML = "";
       showError("No countries found.");
@@ -199,16 +217,7 @@ regionButtons.forEach((button) => {
     localStorage.setItem("lastRegion", region);
     localStorage.removeItem("lastSearch");
 
-    if (region === "all") {
-      renderCountries(allCountries);
-      return;
-    }
-
-    const filtered = allCountries.filter(
-      (country) => country.region.toLowerCase() === region,
-    );
-
-    renderCountries(filtered);
+    renderCountries(filterByRegion(region));
   });
 });
 
